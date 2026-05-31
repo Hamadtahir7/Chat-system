@@ -38,9 +38,9 @@ export default function MembersPanel({ members }) {
   const offline = members.filter(m => m.role === "member" && !m.online);
 
   return (
-    <aside className="w-56 bg-sidebar border-l border-border flex flex-col flex-shrink-0 h-full">
-      <div className="px-4 py-4 border-b border-border flex-shrink-0">
-        <p className="text-sm font-bold text-primary">
+    <aside className="w-56 bg-gradient-to-b from-sidebar via-sidebar to-sidebar border-l border-border/50 flex flex-col flex-shrink-0 h-full backdrop-blur-sm">
+      <div className="px-4 py-4 border-b border-border/30 flex-shrink-0">
+        <p className="text-sm font-bold bg-gradient-to-r from-blue-light to-blue bg-clip-text text-transparent">
           Members{" "}
           <span className="text-muted font-normal">({members.length})</span>
         </p>
@@ -53,10 +53,10 @@ export default function MembersPanel({ members }) {
         <MemberGroup label="Offline" members={offline} />
       </div>
 
-      <div className="px-4 py-3 border-t border-border flex-shrink-0">
+      <div className="px-4 py-3 border-t border-border/30 flex-shrink-0">
         <button className="w-full flex items-center justify-center gap-2 py-2.5
-          bg-card border border-border rounded-lg text-xs font-semibold text-primary
-          hover:bg-input transition-colors">
+          glass-sm rounded-lg text-xs font-semibold text-primary
+          hover:bg-card/50 transition-all glow-effect">
           <PlusCircle size={14} /> Invite Members
         </button>
       </div>

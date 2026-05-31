@@ -45,7 +45,7 @@ export default function ChatWindow({ chat, onSendMessage, onNewChat, onMobileMen
       <div className="flex-1 flex flex-col min-w-0 h-full">
 
         {/* Top bar */}
-        <div className="h-14 border-b border-border flex items-center justify-between px-4 flex-shrink-0">
+        <div className="h-14 border-b border-border/30 glass-sm flex items-center justify-between px-4 flex-shrink-0">
           <div className="flex items-center gap-2">
             {/* Mobile menu toggle */}
             <button
@@ -64,8 +64,8 @@ export default function ChatWindow({ chat, onSendMessage, onNewChat, onMobileMen
             {chat.members.length > 0 && (
               <button
                 onClick={() => setShowMembers(!showMembers)}
-                className={`p-1.5 rounded-lg transition-colors ${
-                  showMembers ? "bg-blue/20 text-blue-light" : "hover:text-primary"
+                className={`p-1.5 rounded-lg transition-all ${
+                  showMembers ? "glass-sm text-blue-light glow-effect" : "hover:text-primary"
                 }`}
               >
                 <Users size={16} />
@@ -100,8 +100,8 @@ export default function ChatWindow({ chat, onSendMessage, onNewChat, onMobileMen
         </div>
 
         {/* Input bar */}
-        <div className="px-4 py-3 border-t border-border flex-shrink-0">
-          <div className="flex items-center gap-2 bg-input border border-border rounded-xl px-3 py-2">
+        <div className="px-4 py-3 border-t border-border/30 bg-gradient-to-t from-sidebar via-sidebar/50 to-transparent flex-shrink-0">
+          <div className="flex items-center gap-2 glass-sm rounded-xl px-3 py-2.5">
             <button className="text-muted hover:text-primary transition-colors flex-shrink-0">
               <Paperclip size={16} />
             </button>
@@ -118,8 +118,8 @@ export default function ChatWindow({ chat, onSendMessage, onNewChat, onMobileMen
             </button>
             <button
               onClick={handleSend}
-              className="w-8 h-8 rounded-lg bg-blue hover:bg-blue-hover flex items-center justify-center
-                flex-shrink-0 transition-colors"
+              className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-light to-blue hover:from-blue hover:to-blue-hover flex items-center justify-center
+                flex-shrink-0 transition-all glow-effect"
             >
               <Send size={14} className="text-white" />
             </button>

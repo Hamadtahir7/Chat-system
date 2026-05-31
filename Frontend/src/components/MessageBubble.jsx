@@ -24,9 +24,9 @@ export default function MessageBubble({ msg, showName }) {
         {/* Bubble */}
         <div className="max-w-sm md:max-w-md lg:max-w-lg">
           {msg.type === "file" ? (
-            <div className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3">
-              <div className="w-9 h-9 rounded-lg bg-input flex items-center justify-center flex-shrink-0">
-                <FileText size={16} className="text-muted" />
+            <div className="flex items-center gap-3 glass-sm rounded-xl px-4 py-3 glow-effect shadow-md">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-light to-blue flex items-center justify-center flex-shrink-0">
+                <FileText size={16} className="text-white" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-primary truncate">{msg.content}</p>
@@ -38,10 +38,10 @@ export default function MessageBubble({ msg, showName }) {
             </div>
           ) : (
             <div
-              className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed text-primary
+              className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed text-primary shadow-md
                 ${msg.mine
-                  ? "bg-sent rounded-br-sm"
-                  : "bg-recv rounded-bl-sm"
+                  ? "bg-gradient-to-r from-blue-light to-blue rounded-br-sm glow-effect"
+                  : "glass-sm rounded-bl-sm"
                 }`}
             >
               {msg.content}
