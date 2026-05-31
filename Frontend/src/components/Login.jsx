@@ -1,11 +1,33 @@
 // src/components/Login.jsx
 import { useState } from "react";
 import { Eye, EyeOff, Cloud, Lock } from "lucide-react";
+import { authService } from "../services/authService";
 
 export default function Login({ onSwitch, onLogin }) {
   const [email, setEmail]   = useState("");
   const [pass, setPass]     = useState("");
   const [show, setShow]     = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = async () => {
+    if (!email || !pass) {
+      setError("Please fill in all fields");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      const result = await authService.login(email, pass);
+      console.log("Login successful:", result);
+      onLogin();
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed. Please try again.");
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-bg via-bg to-sidebar flex flex-col items-center justify-center px-4 py-10 relative overflow-hidden">
@@ -68,12 +90,19 @@ export default function Login({ onSwitch, onLogin }) {
 
         {/* Login btn */}
         <button
-          onClick={onLogin}
+          onClick={handleLogin}
+          disabled={loading}
           className="w-full mt-6 bg-gradient-to-r from-blue-light to-blue hover:from-blue hover:to-blue-hover text-white font-semibold py-3 rounded-lg
-            text-sm transition-all duration-300 glow-effect shadow-lg"
+            text-sm transition-all duration-300 glow-effect shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Sign In
+          {loading ? "Signing In..." : "Sign In"}
         </button>
+
+        {error && (
+          <div className="mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg">
+            <p className="text-xs text-red-300">{error}</p>
+          </div>
+        )}
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-6">

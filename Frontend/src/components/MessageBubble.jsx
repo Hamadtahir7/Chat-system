@@ -3,11 +3,14 @@ import { FileText, Download } from "lucide-react";
 import Avatar from "./Avatar";
 
 export default function MessageBubble({ msg, showName }) {
-  const initials = msg.sender
+  if (!msg) return null;
+  
+  const initials = (msg.sender || "U")
     .split(" ")
     .map(w => w[0])
     .join("")
-    .slice(0, 2);
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <div className={`flex flex-col ${msg.mine ? "items-end" : "items-start"} mb-1.5`}>

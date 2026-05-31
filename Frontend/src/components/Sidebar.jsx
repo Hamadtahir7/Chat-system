@@ -7,7 +7,7 @@ export default function Sidebar({ chats, activeId, onSelect, onNewChat, onLogout
   const [query, setQuery] = useState("");
 
   const filtered = chats.filter(c =>
-    c.name.toLowerCase().includes(query.toLowerCase())
+    (c.title || "").toLowerCase().includes(query.toLowerCase())
   );
 
   return (
@@ -68,36 +68,47 @@ export default function Sidebar({ chats, activeId, onSelect, onNewChat, onLogout
         {/* Chat list */}
         <div className="flex-1 overflow-y-auto px-2 min-h-0">
           <p className="text-[10px] font-bold uppercase tracking-widest text-muted px-2 pb-2">Messages</p>
-          {filtered.map(c => (
-            <button
-              key={c.id}
-              onClick={() => { onSelect(c.id); onMobileClose?.(); }}
-              className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg mb-0.5 text-left
-                transition-all group
-                ${activeId === c.id
-                  ? "glass-sm border-l-2 border-blue-light glow-effect shadow-md"
-                  : "hover:glass-sm border-l-2 border-transparent"
-                }`}
-            >
-              <Avatar initials={c.initials} online={c.online} size="md" />
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center">
-                  <span className={`text-xs truncate max-w-[110px]
-                    ${c.unread ? "font-bold text-primary" : "font-semibold text-primary"}`}>
-                    {c.name}
-                  </span>
-                  <span className="text-[10px] text-muted flex-shrink-0 ml-1">{c.time}</span>
+          {chats && chats.length > 0 ? (
+            filtered.map(c => (
+              <button
+                key={c.chat_id}
+                onClick={() => { onSelect(c.chat_id); onMobileClose?.(); }}
+                className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg mb-0.5 text-left
+                  transition-all group
+                  ${activeId === c.chat_id
+                    ? "glass-sm border-l-2 border-blue-light glow-effect shadow-md"
+                    : "hover:glass-sm border-l-2 border-transparent"
+                  }`}
+              >
+                <Avatar initials={c.title?.slice(0, 2).toUpperCase() || "C"} online={c.online || false} size="md" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-center">
+                    <span className={`text-xs truncate max-w-[110px]
+                      ${c.unread_count > 0 ? "font-bold text-primary" : "font-semibold text-primary"}`}>
+                      {c.title || "Chat"}
+                    </span>
+                    {c.last_message_at && (
+                      <span className="text-[10px] text-muted flex-shrink-0 ml-1">
+                        {new Date(c.last_message_at).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-muted truncate">{c.last_message || "No messages yet"}</p>
                 </div>
-                <p className="text-[11px] text-muted truncate">{c.lastMsg}</p>
-              </div>
-              {c.unread > 0 && (
-                <span className="w-4 h-4 rounded-full bg-blue text-white text-[10px] font-bold
-                  flex items-center justify-center flex-shrink-0">
-                  {c.unread}
-                </span>
-              )}
-            </button>
-          ))}
+                {c.unread_count > 0 && (
+                  <span className="w-4 h-4 rounded-full bg-blue text-white text-[10px] font-bold
+                    flex items-center justify-center flex-shrink-0">
+                    {c.unread_count}
+                  </span>
+                )}
+              </button>
+            ))
+          ) : (
+            <p className="text-center text-muted text-xs mt-4">No chats yet. Start a new conversation!</p>
+          )}
         </div>
 
         {/* Bottom nav */}

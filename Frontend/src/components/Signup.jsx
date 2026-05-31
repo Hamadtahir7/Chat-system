@@ -1,12 +1,38 @@
 // src/components/Signup.jsx
 import { useState } from "react";
 import { Eye, EyeOff, MessageSquare } from "lucide-react";
+import { authService } from "../services/authService";
 
 export default function Signup({ onSwitch, onSignup }) {
   const [username, setUsername] = useState("");
   const [email, setEmail]       = useState("");
   const [pass, setPass]         = useState("");
   const [show, setShow]         = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSignup = async () => {
+    if (!username || !email || !pass) {
+      setError("Please fill in all fields");
+      return;
+    }
+    if (pass.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      const result = await authService.signup(username, email, pass);
+      console.log("Signup successful:", result);
+      onSignup();
+    } catch (err) {
+      setError(err.response?.data?.message || "Signup failed. Please try again.");
+      console.error("Signup error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-bg via-bg to-sidebar flex items-center justify-center px-4 py-10 relative overflow-hidden">
@@ -80,12 +106,19 @@ export default function Signup({ onSwitch, onSignup }) {
 
         {/* Submit */}
         <button
-          onClick={onSignup}
+          onClick={handleSignup}
+          disabled={loading}
           className="w-full mt-6 bg-gradient-to-r from-blue-light to-blue hover:from-blue hover:to-blue-hover text-white font-semibold py-3 rounded-lg
-            text-sm transition-all duration-300 glow-effect shadow-lg"
+            text-sm transition-all duration-300 glow-effect shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Create Account
+          {loading ? "Creating Account..." : "Create Account"}
         </button>
+
+        {error && (
+          <div className="mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg">
+            <p className="text-xs text-red-300">{error}</p>
+          </div>
+        )}
 
         <p className="text-center text-xs text-muted mt-4">
           By registering, you agree to ChatApp's{" "}
