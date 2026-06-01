@@ -31,8 +31,8 @@ export default function NewChatModal({ onClose, onChatCreated }) {
   }, []);
 
   const filtered = users.filter(u =>
-    (u.name?.toLowerCase().includes(query.toLowerCase()) || false) ||
-    (u.username?.toLowerCase().includes(query.toLowerCase()) || false)
+    (u.username?.toLowerCase().includes(query.toLowerCase()) || false) ||
+    (u.email?.toLowerCase().includes(query.toLowerCase()) || false)
   );
 
   const toggleUserSelection = (userId) => {

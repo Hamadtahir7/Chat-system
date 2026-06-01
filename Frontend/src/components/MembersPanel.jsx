@@ -9,33 +9,40 @@ function MemberGroup({ label, members }) {
       <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-2">
         {label} — {members.length}
       </p>
-      {members.map(m => (
-        <div
-          key={m.id}
-          className={`flex items-center gap-2.5 py-1.5 ${!m.online ? "opacity-50" : ""}`}
-        >
-          <Avatar
-            initials={m.name.split(" ").map(w => w[0]).join("").slice(0, 2)}
-            online={m.online}
-            size="sm"
-          />
-          <div className="min-w-0">
-            <p className={`text-xs font-semibold truncate ${m.online ? "text-primary" : "text-muted"}`}>
-              {m.name}
-            </p>
-            {m.subtitle && <p className="text-[10px] text-muted truncate">{m.subtitle}</p>}
+      {members.map(m => {
+        const name = m.username || m.name || 'Unknown';
+        const isOnline = m.is_online || m.online || false;
+        return (
+          <div
+            key={m.user_id || m.id}
+            className={`flex items-center gap-2.5 py-1.5 ${!isOnline ? "opacity-50" : ""}`}
+          >
+            <Avatar
+              initials={name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()}
+              online={isOnline}
+              size="sm"
+            />
+            <div className="min-w-0">
+              <p className={`text-xs font-semibold truncate ${isOnline ? "text-primary" : "text-muted"}`}>
+                {name}
+              </p>
+              <p className="text-[10px] text-muted truncate">{m.role}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
 
 export default function MembersPanel({ members }) {
+  if (!members || members.length === 0) return null;
+  
   const owners  = members.filter(m => m.role === "owner");
   const admins  = members.filter(m => m.role === "admin");
-  const online  = members.filter(m => m.role === "member" && m.online);
-  const offline = members.filter(m => m.role === "member" && !m.online);
+  const regulars = members.filter(m => m.role === "member");
+  const online  = regulars.filter(m => m.is_online || m.online);
+  const offline = regulars.filter(m => !(m.is_online || m.online));
 
   return (
     <aside className="w-56 bg-gradient-to-b from-sidebar via-sidebar to-sidebar border-l border-border/50 flex flex-col flex-shrink-0 h-full backdrop-blur-sm">

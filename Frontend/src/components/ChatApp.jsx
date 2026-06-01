@@ -74,6 +74,36 @@ export default function ChatApp({ onLogout }) {
     loadMessages();
   }, [activeId, currentUser]);
 
+  // Load members for group chats
+  useEffect(() => {
+    if (!activeId) return;
+    
+    const activeChat = chats.find(c => c.chat_id === activeId);
+    if (!activeChat || activeChat.chat_type !== 'group') return;
+    
+    const loadMembers = async () => {
+      try {
+        const response = await chatService.getChatMembers(activeId);
+        console.log('👥 Members loaded:', response);
+        
+        const membersData = response.data ? response.data : (Array.isArray(response) ? response : []);
+        
+        // Update chat with members
+        setChats(prev =>
+          prev.map(c =>
+            c.chat_id === activeId
+              ? { ...c, members: membersData }
+              : c
+          )
+        );
+      } catch (error) {
+        console.error("Failed to load members:", error);
+      }
+    };
+    
+    loadMembers();
+  }, [activeId, chats]);
+
   // Initialize socket and fetch chats on mount
   useEffect(() => {
     const initializeApp = async () => {
@@ -118,7 +148,7 @@ export default function ChatApp({ onLogout }) {
                     messages: [...(c.messages || []), {
                       ...message,
                       sender: message.sender_name || 'Unknown',
-                      mine: Number(message.sender_id) === Number(currentUser?.user_id),
+                      mine: Number(message.sender_id) === Number(user?.user_id),
                       time: new Date(message.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
                     }],
                     last_message: message.content,
@@ -192,6 +222,27 @@ export default function ChatApp({ onLogout }) {
       });
   }
 
+  function handleSelectChat(chatId) {
+    setActiveId(chatId);
+    setMobileOpen(false);
+    
+    // Mark chat as read
+    messageService.markAsRead(chatId)
+      .then(() => {
+        // Update chat unread count to 0
+        setChats(prev =>
+          prev.map(c =>
+            c.chat_id === chatId
+              ? { ...c, unread_count: 0 }
+              : c
+          )
+        );
+      })
+      .catch(err => {
+        console.error("Failed to mark as read:", err);
+      });
+  }
+
   if (loading) {
     return (
       <div className="flex h-screen bg-bg items-center justify-center">
@@ -229,7 +280,7 @@ export default function ChatApp({ onLogout }) {
       <Sidebar
         chats={chats}
         activeId={activeId}
-        onSelect={id => { setActiveId(id); setMobileOpen(false); }}
+        onSelect={handleSelectChat}
         onNewChat={() => setShowModal(true)}
         onLogout={onLogout}
         mobileOpen={mobileOpen}

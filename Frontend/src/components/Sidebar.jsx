@@ -98,7 +98,7 @@ export default function Sidebar({ chats, activeId, onSelect, onNewChat, onLogout
                   </div>
                   <p className="text-[11px] text-muted truncate">{c.last_message || "No messages yet"}</p>
                 </div>
-                {c.unread_count > 0 && (
+                {c.unread_count > 0 && activeId !== c.chat_id && (
                   <span className="w-4 h-4 rounded-full bg-blue text-white text-[10px] font-bold
                     flex items-center justify-center flex-shrink-0">
                     {c.unread_count}
