@@ -206,4 +206,31 @@ async function markSeen(req, res, next) {
   }
 }
 
-module.exports = { getMessages, sendMessage, editMessage, deleteMessage, markSeen };
+// ── POST /api/messages/read ──────────────────────────────────────
+async function markAsRead(req, res, next) {
+  try {
+    const { chat_id } = req.body;
+    const user_id = req.user.user_id;
+
+    if (!chat_id) {
+      return res.status(400).json({ error: "chat_id is required" });
+    }
+
+    // Mark all messages in the chat as seen for this user
+    // The unread_count is calculated from Message_Status, so marking as 'seen' will clear it
+    await pool.query(
+      `UPDATE Message_Status
+       SET status = 'seen', updated_at = NOW()
+       WHERE message_id IN (
+         SELECT message_id FROM Messages WHERE chat_id = ?
+       ) AND user_id = ? AND status != 'seen'`,
+      [chat_id, user_id]
+    );
+
+    res.json({ chat_id, read: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { getMessages, sendMessage, editMessage, deleteMessage, markSeen, markAsRead };
